@@ -13,7 +13,7 @@ class ToDoListViewController: UITableViewController {
     // Step 1
     // Create Item Array
     
-    let itemArray = ["Complete Horizon Report", "Call Horizon", "Let Camera People know", "Email Martive", "Develop Horizon Flexible Campaign"]
+    var itemArray = ["Complete Horizon Report", "Call Horizon", "Let Camera People know", "Email Martive", "Develop Horizon Flexible Campaign"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,8 +63,45 @@ class ToDoListViewController: UITableViewController {
 
     }
     
+    
+    //MARK - Add New Items
+    
+    // Adding Add Item Buttom with IBAction from TableView Controller
+    
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+ 
+    // Setup textfield variable to handle text from textfield below.
+        
+        var textField = UITextField() // Local variable to store
+        
+    // Show PopUp
+    // Have UI Text Field to Add Item
+    // And Append it To Item Array
+    
+    let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+    
+    let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+        // what happens when the user clicks the add item button
+//        print(textField.text!)
+        
+        // Append item our item Array
+        self.itemArray.append(textField.text!) // Use SELF because I'm inside a closure.
+        
+        self.tableView.reloadData() // Reloads the table in tableview
+        
+        // First - change itemArray to be immutable
+    }
+        
+        // Add text field to pop-up
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create New Item"            
+            textField = alertTextField
+        }
+    
+    alert.addAction(action)
+    
+    present(alert, animated: true, completion: nil)
 
+        }
 
-
-}
-
+   }
