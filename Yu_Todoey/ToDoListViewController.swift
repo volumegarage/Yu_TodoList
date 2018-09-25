@@ -15,9 +15,20 @@ class ToDoListViewController: UITableViewController {
     
     var itemArray = ["Complete Horizon Report", "Call Horizon", "Let Camera People know", "Email Martive", "Develop Horizon Flexible Campaign"]
     
+    // In order to store data, we need to setup variable for User Defaults
+    
+    let defaults = UserDefaults.standard
+    // User defaults are saved in plist file
+    // Saved in key value pairs
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        // Set itemArray to use User Defaults from .plist
+        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+            itemArray = items
+        }
     }
     
     // Step 2 - Create the Table View Data Source Methods
@@ -87,6 +98,9 @@ class ToDoListViewController: UITableViewController {
         // Append item our item Array
         self.itemArray.append(textField.text!) // Use SELF because I'm inside a closure.
         
+        // We can now save this new item array to our User Defaults as outlined above
+        self.defaults.set(self.itemArray, forKey: "ToDoListArray")
+        
         self.tableView.reloadData() // Reloads the table in tableview
         
         // First - change itemArray to be immutable
@@ -94,7 +108,7 @@ class ToDoListViewController: UITableViewController {
         
         // Add text field to pop-up
         alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = "Create New Item"            
+            alertTextField.placeholder = "Create New Item"
             textField = alertTextField
         }
     
