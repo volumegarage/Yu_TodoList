@@ -13,7 +13,9 @@ class ToDoListViewController: UITableViewController {
     // Step 1
     // Create Item Array
     
-    var itemArray = ["Complete Horizon Report", "Call Horizon", "Let Camera People know", "Email Martive", "Develop Horizon Flexible Campaign"]
+//    var itemArray = ["Complete Horizon Report", "Call Horizon", "Let Camera People know", "Email Martive", "Develop Horizon Flexible Campaign"] - First Look before persitent data
+    
+    var itemArray = [Item]()
     
     // In order to store data, we need to setup variable for User Defaults
     
@@ -25,10 +27,22 @@ class ToDoListViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
+        let newItem = Item()
+        newItem.title = "Find Mike"
+        itemArray.append(newItem)
+        
+        let newItem2 = Item()
+        newItem.title = "Buy Eggos"
+        itemArray.append(newItem2)
+        
+        let newItem3 = Item()
+        newItem.title = "Destroy Demogorgon"
+        itemArray.append(newItem3)
+        
         // Set itemArray to use User Defaults from .plist
-        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
-            itemArray = items
-        }
+//        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+//            itemArray = items
+//        }
     }
     
     // Step 2 - Create the Table View Data Source Methods
@@ -43,7 +57,23 @@ class ToDoListViewController: UITableViewController {
         // for: current indexPath the tableview is looking to populate
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemArray[indexPath.row]
+        
+        
+        
+        let item = itemArray[indexPath.row] // REFACTORING FROM BELOW
+        
+//        cell.textLabel?.text = itemArray[indexPath.row] - This old returns an item object. We need to get title property using dot notion
+//        cell.textLabel?.text = itemArray[indexPath.row].title
+        cell.textLabel?.text = item.title // REFACTORED FROM ABOVE
+        
+        // Setting new accessory type with data model
+//        if itemArray[indexPath.row].done == true { // REFACTORED FROM BELOW WITH ITEM
+        if item.done == true {
+
+            cell.accessoryType = .checkmark
+        } else {
+            cell.accessoryType = .none
+        }
         
         return cell
     }
@@ -59,14 +89,32 @@ class ToDoListViewController: UITableViewController {
         
   
         
-        // How to remove from cell if there is a checkmark
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }   else {
-                    // Give the cell a checkmark as selected.
-                    tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-
-        }
+        
+        
+//        if itemArray[indexPath.row].done == false {
+//            itemArray[indexPath.row].done = true
+//        } else {
+//            itemArray[indexPath.row].done = false
+//        }
+        
+        // REFACTOR FROM ABOVE
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done // Sets to opposits
+        // Booleans only have one or two states
+        
+        
+        
+        
+        
+        // How to remove from cell if there is a checkmark [ REMOVED FOR NEW DATA MDEL ABOVE ]
+//        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+//        }   else {
+//                    // Give the cell a checkmark as selected.
+//                    tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+//
+//        }
+        
+        tableView.reloadData()
         
         // Removes selected highlight when clicked.
         tableView.deselectRow(at: indexPath, animated: true)
@@ -96,7 +144,13 @@ class ToDoListViewController: UITableViewController {
 //        print(textField.text!)
         
         // Append item our item Array
-        self.itemArray.append(textField.text!) // Use SELF because I'm inside a closure.
+        // self.itemArray.append(textField.text!) // Use SELF because I'm inside a closure.
+        
+        let newItem = Item()
+        newItem.title = textField.text! // New Data model that uses new item to attach title to text field property.
+        
+//        self.itemArray.appen(textField.text!)
+        self.itemArray.append(newItem) // For new data model.
         
         // We can now save this new item array to our User Defaults as outlined above
         self.defaults.set(self.itemArray, forKey: "ToDoListArray")
