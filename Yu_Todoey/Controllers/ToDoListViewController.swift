@@ -39,10 +39,10 @@ class ToDoListViewController: UITableViewController {
         newItem.title = "Destroy Demogorgon"
         itemArray.append(newItem3)
         
-        // Set itemArray to use User Defaults from .plist
-//        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
-//            itemArray = items
-//        }
+//         Set itemArray to use User Defaults from .plist
+        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
+            itemArray = items
+        }
     }
     
     // Step 2 - Create the Table View Data Source Methods
@@ -68,12 +68,19 @@ class ToDoListViewController: UITableViewController {
         
         // Setting new accessory type with data model
 //        if itemArray[indexPath.row].done == true { // REFACTORED FROM BELOW WITH ITEM
-        if item.done == true {
-
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
-        }
+  
+//        if item.done == true {
+//
+//            cell.accessoryType = .checkmark
+//        } else {
+//            cell.accessoryType = .none
+//        }
+        
+        // SHORTEN THESE ITEMS ABOVE USING A TERNERARY OPERATOR
+        // TERNARY OPERATOR ==>
+        // value = condition ? valueifTrue : valueifFalse
+        
+        cell.accessoryType = item.done ? .checkmark : .none // One line expression - composed of three parts.
         
         return cell
     }
