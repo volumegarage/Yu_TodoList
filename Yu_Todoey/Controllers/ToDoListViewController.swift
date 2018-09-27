@@ -35,22 +35,26 @@ class ToDoListViewController: UITableViewController {
         
         print(dataFilePath)
         
-        let newItem = Item()
-        newItem.title = "Find Mike"
-        itemArray.append(newItem)
-        
-        let newItem2 = Item()
-        newItem2.title = "Buy Eggos"
-        itemArray.append(newItem2)
-        
-        let newItem3 = Item()
-        newItem3.title = "Destroy Demogorgon"
-        itemArray.append(newItem3)
+//        let newItem = Item()
+//        newItem.title = "Find Mike"
+//        itemArray.append(newItem)
+//        
+//        let newItem2 = Item()
+//        newItem2.title = "Buy Eggos"
+//        itemArray.append(newItem2)
+//        
+//        let newItem3 = Item()
+//        newItem3.title = "Destroy Demogorgon"
+//        itemArray.append(newItem3)
         
 //         Set itemArray to use User Defaults from .plist
 //        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
 //            itemArray = items
 //        }
+        
+        // Info above was called directly. Now we need to load items from P.list and persistent storage
+        loadItems() // Method we create down below
+        
     }
     
     // Step 2 - Create the Table View Data Source Methods
@@ -217,6 +221,19 @@ class ToDoListViewController: UITableViewController {
         
         self.tableView.reloadData() // Reloads the table in tableview
         
+    }
+    
+    func loadItems() {
+        
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error decoding item \(error)")
+            }
+        }
     }
 
    }

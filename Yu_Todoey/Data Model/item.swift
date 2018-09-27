@@ -10,7 +10,7 @@ import Foundation
 
 // Usually named the same as the file.
 
-class Item: Encodable {
+class Item: Codable {
     
     var title : String = ""
     var done : Bool = false
