@@ -42,7 +42,7 @@ class ToDoListViewController: UITableViewController {
         
 
         
-        print(dataFilePath)
+//        print(dataFilePath)
         
 //        let newItem = Item()
 //        newItem.title = "Find Mike"
@@ -62,7 +62,7 @@ class ToDoListViewController: UITableViewController {
 //        }
         
         // Info above was called directly. Now we need to load items from P.list and persistent storage
-//        loadItems() // Method we create down below - REMOVED FOR USE WITH CORE DATA
+        loadItems() // Method we create down below - REMOVED FOR USE WITH CORE DATA
         
     }
     
@@ -250,8 +250,10 @@ class ToDoListViewController: UITableViewController {
         
     }
     
-//    func loadItems() { // DELETED FOR USE OF CORE DATA
-//
+    func loadItems() {
+        
+        // DELETED FOR USE OF CORE DATA
+
 //        if let data = try? Data(contentsOf: dataFilePath!) {
 //            let decoder = PropertyListDecoder()
 //
@@ -261,6 +263,17 @@ class ToDoListViewController: UITableViewController {
 //                print("Error decoding item \(error)")
 //            }
 //        }
-//    }
+        
+        // THESE ARE CORE DATA CONSTRUCTS
+        // LET REQEST BE OF DATA TYPE AND WHAT IT IS REQUESTING
+        let request : NSFetchRequest<Item> = Item.fetchRequest() // Blank request that pulls back anything in persistent container
+        do {
+            itemArray = try context.fetch(request) // Have to speak to persistent container before it can do anything / throws and error so must be do catch for errors
+        } catch {
+            print("Error fetching data from context \(error)")
+        }
+
+
+    }
 
    }
