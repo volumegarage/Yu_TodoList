@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
 
@@ -26,6 +27,14 @@ class ToDoListViewController: UITableViewController {
     
     // Create a File Path to the Document folder
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
+    
+    //        let newItem = Item() // Changed for Core Data Implementation.
+    //  Made Global for use in two methods below.
+    
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,7 +62,7 @@ class ToDoListViewController: UITableViewController {
 //        }
         
         // Info above was called directly. Now we need to load items from P.list and persistent storage
-        loadItems() // Method we create down below
+//        loadItems() // Method we create down below - REMOVED FOR USE WITH CORE DATA
         
     }
     
@@ -166,8 +175,22 @@ class ToDoListViewController: UITableViewController {
         // Append item our item Array
         // self.itemArray.append(textField.text!) // Use SELF because I'm inside a closure.
         
-        let newItem = Item()
+        
+        
+//        let newItem = Item() // Changed for Core Data Implementation.
+        
+//        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext // Eliminated when this line was made Global above.
+//        let newItem = Item(context: context) // Eliminated when this line was made Global above.
+//
+        let newItem = Item(context: self.context) // Because we are in closure
+        
+        
+        
+        
         newItem.title = textField.text! // New Data model that uses new item to attach title to text field property.
+        
+        // WITH CORE DATA, WE HAVE TO SET DEFAULT STATE OF DONE TO FALSE
+        newItem.done = false
         
 //        self.itemArray.appen(textField.text!)
         self.itemArray.append(newItem) // For new data model.
@@ -210,30 +233,34 @@ class ToDoListViewController: UITableViewController {
     
     func saveItems() {
         
-        let encoder = PropertyListEncoder()
+//        let encoder = PropertyListEncoder() - Eliminated for Core Data
         
         do {
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
+//            let data = try encoder.encode(itemArray) - Eliminated for Core Data
+//            try data.write(to: dataFilePath!) - Eliminated for Core Data
+            
+            // Use new Save Context Method from CoreData element in App Delegate
+           try context.save()
+            
         } catch {
-            print("Error encoding item array \(error)")
+          print("Error encoding item array \(error)")
         }
         
         self.tableView.reloadData() // Reloads the table in tableview
         
     }
     
-    func loadItems() {
-        
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            } catch {
-                print("Error decoding item \(error)")
-            }
-        }
-    }
+//    func loadItems() { // DELETED FOR USE OF CORE DATA
+//
+//        if let data = try? Data(contentsOf: dataFilePath!) {
+//            let decoder = PropertyListDecoder()
+//
+//            do {
+//                itemArray = try decoder.decode([Item].self, from: data)
+//            } catch {
+//                print("Error decoding item \(error)")
+//            }
+//        }
+//    }
 
    }
