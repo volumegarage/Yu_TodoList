@@ -277,3 +277,44 @@ class ToDoListViewController: UITableViewController {
     }
 
    }
+
+// Extensions extend range of ViewController
+// Moderuliazer and split of sections
+
+//MARK: - SearchBar Methods
+
+extension ToDoListViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        // to read from context we need to read from request
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        
+        // Specifiy what is going to be our filter
+        // Tag on a query what we want from database
+        
+        // Object C Modifier for this string
+        // NS PREDICATE CHEATSHEET
+//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+//        request.predicate = predicate - REFACTORED ABOVE
+        
+        // Now how do we sort data....
+//        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true) - REFACTORED BELOW
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+//        request.sortDescriptors = [sortDescriptor]
+        
+        // Copied up from above since it's doing the same thing to fetch the results from persistent storer
+            // Assign this to the item array.
+        do {
+            itemArray = try context.fetch(request) // Have to speak to persistent container before it can do anything / throws and error so must be do catch for errors
+        } catch {
+            print("Error fetching data from context \(error)")
+        }
+        
+        tableView.reloadData()
+        
+    }
+}
