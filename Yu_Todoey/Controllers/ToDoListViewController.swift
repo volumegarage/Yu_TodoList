@@ -235,23 +235,30 @@ class ToDoListViewController: UITableViewController {
         
 //        let encoder = PropertyListEncoder() - Eliminated for Core Data
         
-        do {
-//            let data = try encoder.encode(itemArray) - Eliminated for Core Data
-//            try data.write(to: dataFilePath!) - Eliminated for Core Data
-            
-            // Use new Save Context Method from CoreData element in App Delegate
-           try context.save()
-            
-        } catch {
-          print("Error encoding item array \(error)")
-        }
+        
+        
+        // REFACTORING TO AVOID DUPLICATION  FROM BELOW IN LOAD ITEMS
+        // REFACTOR LOAD ITEMS TO TAKE A PARAMETER
+        
+//        do {
+////            let data = try encoder.encode(itemArray) - Eliminated for Core Data
+////            try data.write(to: dataFilePath!) - Eliminated for Core Data
+//
+//            // Use new Save Context Method from CoreData element in App Delegate
+//           try context.save()
+//
+//        } catch {
+//          print("Error encoding item array \(error)")
+//        }
         
         self.tableView.reloadData() // Reloads the table in tableview
         
     }
     
-    func loadItems() {
-        
+//    func loadItems() { // REFACTORED FOR CATCH TO ACCEPT A REQUEST
+    // REFACTORING - PROVIDED A DEFAULT VALUE
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+    
         // DELETED FOR USE OF CORE DATA
 
 //        if let data = try? Data(contentsOf: dataFilePath!) {
@@ -266,7 +273,9 @@ class ToDoListViewController: UITableViewController {
         
         // THESE ARE CORE DATA CONSTRUCTS
         // LET REQEST BE OF DATA TYPE AND WHAT IT IS REQUESTING
-        let request : NSFetchRequest<Item> = Item.fetchRequest() // Blank request that pulls back anything in persistent container
+        
+        // REFACTORING - DON'T REALLY NEED THIS LINE - SINCE WE ARE DOING DO CATCH
+//        let request : NSFetchRequest<Item> = Item.fetchRequest() // Blank request that pulls back anything in persistent container
         do {
             itemArray = try context.fetch(request) // Have to speak to persistent container before it can do anything / throws and error so must be do catch for errors
         } catch {
@@ -303,18 +312,22 @@ extension ToDoListViewController: UISearchBarDelegate {
         
         // Now how do we sort data....
 //        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true) - REFACTORED BELOW
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)] // Had to add brackets for Array
 //        request.sortDescriptors = [sortDescriptor]
         
         // Copied up from above since it's doing the same thing to fetch the results from persistent storer
             // Assign this to the item array.
-        do {
-            itemArray = try context.fetch(request) // Have to speak to persistent container before it can do anything / throws and error so must be do catch for errors
-        } catch {
-            print("Error fetching data from context \(error)")
-        }
         
-        tableView.reloadData()
+        // REFACTORED FROM WORK ABOVE FROM LOAD ITEMS REQUEST
+        loadItems(with: request)
+//        do {
+//            itemArray = try context.fetch(request) // Have to speak to persistent container before it can do anything / throws and error so must be do catch for errors
+//        } catch {
+//            print("Error fetching data from context \(error)")
+//        }
+        
+        // REFACTORING BECAUSE IT'S ALREADY IN LOAD ITEMS.
+//        tableView.reloadData()
         
     }
 }
